@@ -1,0 +1,47 @@
+{
+  "name": "Example",
+  "id": "5a72d772-aaf5-c3b6-121e-d81411470a0f",
+  "variables": [
+    {
+      "id": "aff2f5a3-98c9-43cb-8a80-b07fab0a3ba3",
+      "name": "arg0",
+      "type": "java.lang.String"
+    }
+  ],
+  "functions": [
+    {
+      "id": "6cfe4e11-fea4-4df7-9739-227c7e5578f1",
+      "name": "main",
+      "parameters": [
+        {
+          "type": "[java.lang.String",
+          "name": "args"
+        }
+      ],
+      "returns": [
+        {
+          "type": "void"
+        }
+      ],
+      "first_element": "8dee8b3e-9f2d-456b-a860-5309b868a8bc"
+    }
+  ],
+  "elements": [
+    {
+      "id": "8dee8b3e-9f2d-456b-a860-5309b868a8bc",
+      "name": "arg0",
+      "type": "java.lang.String",
+      "op": "array_index",
+      "inputs": [
+        {
+          "type": "[java.lang.String",
+          "value": "args"
+        },
+        {
+          "type": "java.lang.Integer",
+          "value": "0"
+        }
+      ]
+    }
+  ]
+}
