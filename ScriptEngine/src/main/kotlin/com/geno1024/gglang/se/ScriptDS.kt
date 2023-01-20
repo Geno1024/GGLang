@@ -62,15 +62,19 @@ data class ScriptDS(
         {
             ARRAY_INDEX, // name = input0[input1];
             ASSIGN, // name = input0;
+            BRANCH_CALL, // if (input0) { input1 } else if (input2) { input3 } else { input4 }
             FUNCTION_CALL, // name = input0(input1, ...);
             INFIX, // name = input0 input1 input2; for example "a + b"
             UNARY, // name = input0 input1; for example "-a"
         }
 
-        override fun toString(): String = """${if (type != "void") "$type $name = " else ""} ${when (op)
+        override fun toString(): String = """${if (type != "void") "$type $name = " else ""}${when (op)
         {
             Op.ARRAY_INDEX -> "${inputs[0].value}[${inputs[1].value}]"
             Op.ASSIGN -> inputs[0].value
+            Op.BRANCH_CALL -> "if (${inputs[0].value}) {\n\t${script?.getElementById(inputs[1].value)?.iterToString()} \n}" +
+                inputs.drop(2).windowed(size = 2, step = 2, partialWindows = false).joinToString(separator = "\n") { "else if (${it[0].value}) {\n\t${script?.getElementById(it[1].value)?.iterToString()}}" } +
+                if (inputs.size.mod(2) == 1) "else {\n\t${script?.getElementById(inputs.last().value)?.iterToString()}}" else ""
             Op.FUNCTION_CALL -> "${inputs[0].value}(${inputs.drop(1).joinToString(separator = ", ", transform = Input::value)})"
             Op.INFIX -> "${inputs[0].value} ${inputs[1].value} ${inputs[2].value}"
             Op.UNARY -> "${inputs[0].value} ${inputs[1].value}"
