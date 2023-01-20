@@ -1,11 +1,12 @@
 {
+  "version": 1,
   "name": "Example",
   "id": "5a72d772-aaf5-c3b6-121e-d81411470a0f",
   "variables": [
     {
       "id": "aff2f5a3-98c9-43cb-8a80-b07fab0a3ba3",
       "name": "arg0",
-      "type": "java.lang.String"
+      "type": "String"
     }
   ],
   "functions": [
@@ -14,7 +15,7 @@
       "name": "main",
       "parameters": [
         {
-          "type": "[java.lang.String",
+          "type": "String[]",
           "name": "args"
         }
       ],
@@ -23,23 +24,39 @@
           "type": "void"
         }
       ],
-      "first_element": "8dee8b3e-9f2d-456b-a860-5309b868a8bc"
+      "next_elements": [
+        "8dee8b3e-9f2d-456b-a860-5309b868a8bc"
+      ]
     }
   ],
   "elements": [
     {
       "id": "8dee8b3e-9f2d-456b-a860-5309b868a8bc",
       "name": "arg0",
-      "type": "java.lang.String",
+      "type": "String",
       "op": "array_index",
       "inputs": [
         {
-          "type": "[java.lang.String",
+          "type": "String[]",
           "value": "args"
         },
         {
           "type": "java.lang.Integer",
           "value": "0"
+        }
+      ],
+      "next_elements": [
+      ]
+    },
+    {
+      "id": "24a48957-536c-4241-a1a2-f83cb348c1e3",
+      "name": "",
+      "type": "void",
+      "op": "function_call",
+      "inputs": [
+        {
+          "type": "String",
+          "value": ""
         }
       ]
     }
