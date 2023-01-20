@@ -46,6 +46,7 @@
         }
       ],
       "next_elements": [
+        "24a48957-536c-4241-a1a2-f83cb348c1e3"
       ]
     },
     {
@@ -55,9 +56,16 @@
       "op": "function_call",
       "inputs": [
         {
+          "type": "Function",
+          "value": "System.out.println"
+        },
+        {
           "type": "String",
-          "value": ""
+          "value": "arg0"
         }
+      ],
+      "next_elements": [
+
       ]
     }
   ]

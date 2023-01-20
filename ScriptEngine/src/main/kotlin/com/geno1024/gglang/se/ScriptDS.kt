@@ -7,6 +7,7 @@ import java.io.File
 typealias ID = String
 
 data class ScriptDS(
+    var version: Int,
     var name: String,
     var id: ID,
     var variables: List<Variable>,
@@ -15,7 +16,10 @@ data class ScriptDS(
 ) {
     companion object
     {
-        fun from(input: String): ScriptDS = JSONObject.parseObject(input, ScriptDS::class.java)
+        fun from(input: String): ScriptDS = JSONObject.parseObject(input, ScriptDS::class.java).apply {
+            functions.forEach { it.script = this }
+            elements.forEach { it.script = this }
+        }
 
         fun from(file: File): ScriptDS = from(file.readText())
     }
@@ -34,9 +38,12 @@ data class ScriptDS(
         var name: String,
         var parameters: List<Parameter>,
         var returns: List<Return>, // 暂时不接受多元组
-        @JSONField(name = "first_element") var firstElement: ID
+        @JSONField(name = "next_elements") var nextElements: List<ID>
     ) {
-        override fun toString(): String = """public static ${returns[0].type} $name {
+        var script: ScriptDS? = null
+
+        override fun toString(): String = """public static ${returns[0].type} $name(${parameters.joinToString { "${it.type} ${it.name}" }}) {
+            |${nextElements.joinToString(separator = "\n") { "\t${script?.getElementById(it)?.iterToString()}" } }
             |}
         """.trimMargin()
     }
@@ -46,23 +53,40 @@ data class ScriptDS(
         var name: String,
         var type: String,
         var op: Op,
-        var inputs: List<Input>
+        var inputs: List<Input>,
+        @JSONField(name = "next_elements") var nextElements: List<ID>
     ) {
+        var script: ScriptDS? = null
+
         enum class Op
         {
-            ARRAY_INDEX, // name = input0[input1]
+            ARRAY_INDEX, // name = input0[input1];
+            ASSIGN, // name = input0;
+            FUNCTION_CALL, // name = input0(input1, ...);
+            INFIX, // name = input0 input1 input2; for example "a + b"
+            UNARY, // name = input0 input1; for example "-a"
         }
 
-        override fun toString(): String = """$type $name = ${when (op)
+        override fun toString(): String = """${if (type != "void") "$type $name = " else ""} ${when (op)
         {
             Op.ARRAY_INDEX -> "${inputs[0].value}[${inputs[1].value}]"
+            Op.ASSIGN -> inputs[0].value
+            Op.FUNCTION_CALL -> "${inputs[0].value}(${inputs.drop(1).joinToString(separator = ", ", transform = Input::value)})"
+            Op.INFIX -> "${inputs[0].value} ${inputs[1].value} ${inputs[2].value}"
+            Op.UNARY -> "${inputs[0].value} ${inputs[1].value}"
         }};"""
+
+        fun iterToString(): String = toString() + "\n" + nextElements.joinToString(separator = "\n") { script?.getElementById(it)?.iterToString()?:"" }
     }
 
     data class Input(
         var type: String,
         var value: String
     )
+
+//    data class Output(
+//        var id: ID
+//    )
 
     data class Parameter(
         var type: String,
@@ -73,9 +97,7 @@ data class ScriptDS(
         var type: String
     )
 
-    data class Output(
-        var id: ID
-    )
+    fun getElementById(id: ID) = elements.find { it.id == id }
 
     override fun toString(): String =
         """public class $name {
