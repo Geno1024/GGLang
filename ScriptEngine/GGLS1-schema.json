@@ -7,7 +7,8 @@
   "properties": {
     "version": {
       "type": "integer",
-      "description": "script version"
+      "description": "script version",
+      "minimum": 1
     },
     "name": {
       "type": "string",
@@ -19,7 +20,158 @@
       "description": "script id"
     },
     "variables": {
-      "type": "array"
+      "type": "array",
+      "minItems": 0,
+      "description": "variables, transpiled as static variables",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$",
+            "description": "variable id"
+          },
+          "name": {
+            "type": "string",
+            "description": "variable name"
+          },
+          "type": {
+            "type": "string",
+            "description": "variable type"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "name"
+        ]
+      }
+    },
+    "functions": {
+      "type": "array",
+      "minItems": 0,
+      "description": "functions, transpiled as some static functions",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$",
+            "description": "function id"
+          },
+          "name": {
+            "type": "string",
+            "description": "function name"
+          },
+          "parameters": {
+            "type": "array",
+            "description": "function parameters",
+            "items": {
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "function parameter type"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "function parameter name"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "name"
+            ]
+          },
+          "returns": {
+            "type": "array",
+            "description": "return types",
+            "items": {
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "function return type"
+                }
+              }
+            }
+          },
+          "next_elements": {
+            "type": "array",
+            "description": "the first element of this function",
+            "items": {
+              "type": "string",
+              "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "parameters",
+          "returns",
+          "next_elements"
+        ]
+      }
+    },
+    "elements": {
+      "type": "array",
+      "minItems": 0,
+      "description": "elements, transpiled as one line of Java code, either `type name = op();` or `/* void = */ op();`",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$",
+            "description": "element id"
+          },
+          "name": {
+            "type": "string",
+            "description": "assigning variable name"
+          },
+          "type": {
+            "type": "string",
+            "description": "assigning variable type"
+          },
+          "op": {
+            "description": "operation type",
+            "enum": [
+              "array_index",
+              "assign",
+              "branch_call",
+              "function_call",
+              "infix",
+              "unary"
+            ]
+          },
+          "inputs": {
+            "type": "array",
+            "description": "input arguments",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "input arguments type, may be ignored"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "input arguments value"
+                }
+              }
+            }
+          },
+          "next_elements": {
+            "type": "array",
+            "description": "next element of this current element, sequencing the statements",
+            "minItems": 0,
+            "items": {
+              "type": "string",
+              "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"
+            }
+          }
+        }
+      }
     }
   },
   "required": [
