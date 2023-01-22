@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Geno1024/GGLang/ScriptEngine/GGLS1-schema.json",
+  "title": "GGLang Script 1 Schema",
+  "description": "GGLang Script 1, implementing Spec 1.",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "description": "script version"
+    },
+    "name": {
+      "type": "string",
+      "description": "script name"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$",
+      "description": "script id"
+    },
+    "variables": {
+      "type": "array"
+    }
+  },
+  "required": [
+    "version"
+  ]
+}
