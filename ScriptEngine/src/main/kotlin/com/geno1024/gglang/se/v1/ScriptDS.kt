@@ -1,4 +1,4 @@
-package com.geno1024.gglang.se
+package com.geno1024.gglang.se.v1
 
 import com.alibaba.fastjson2.JSONObject
 import com.alibaba.fastjson2.annotation.JSONField
@@ -73,8 +73,8 @@ data class ScriptDS(
             Op.ARRAY_INDEX -> "${inputs[0].value}[${inputs[1].value}]"
             Op.ASSIGN -> inputs[0].value
             Op.BRANCH_CALL -> "if (${inputs[0].value}) {\n\t${script?.getElementById(inputs[1].value)?.iterToString()} \n}" +
-                inputs.drop(2).windowed(size = 2, step = 2, partialWindows = false).joinToString(separator = "\n") { "else if (${it[0].value}) {\n\t${script?.getElementById(it[1].value)?.iterToString()}}" } +
-                if (inputs.size.mod(2) == 1) "else {\n\t${script?.getElementById(inputs.last().value)?.iterToString()}}" else ""
+                inputs.drop(2).windowed(size = 2, step = 2, partialWindows = false).joinToString(separator = "\n") { " else if (${it[0].value}) {\n\t${script?.getElementById(it[1].value)?.iterToString()}}" } +
+                if (inputs.size.mod(2) == 1) " else {\n\t${script?.getElementById(inputs.last().value)?.iterToString()}}" else ""
             Op.FUNCTION_CALL -> "${inputs[0].value}(${inputs.drop(1).joinToString(separator = ", ", transform = Input::value)})"
             Op.INFIX -> "${inputs[0].value} ${inputs[1].value} ${inputs[2].value}"
             Op.UNARY -> "${inputs[0].value} ${inputs[1].value}"
