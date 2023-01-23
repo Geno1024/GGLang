@@ -43,6 +43,10 @@
             "type": "string",
             "description": "variable type"
           },
+          "initial_value": {
+            "type": "string",
+            "description": "variable initial value"
+          },
           "comment": {
             "type": "string",
             "description": "variable comment"

@@ -30,7 +30,7 @@ data class ScriptDS(
         var name: String,
         var type: String,
         var comment: String?,
-        var initialValue: Any?
+        @JSONField(name = "initial_value") var initialValue: Any?
     ) {
         override fun toString(): String = "public static $type $name${if (initialValue != null) " = $initialValue" else ""};"
     }
@@ -111,7 +111,7 @@ data class ScriptDS(
     fun getElementById(id: ID) = elements.find { it.id == id }
 
     override fun toString(): String =
-        """${if (comment?.isNotEmpty() == true) "// $comment\n" else "" }public class $name {
+        """${if (comment?.isNotEmpty() == true) "/**\n$comment\n */\n" else "" }public class $name {
             |${variables.joinToString(separator = "\n") { "\t$it" } }
             |${functions.joinToString(separator = "\n") { "$it" } }
             |}
