@@ -10,6 +10,7 @@ data class ScriptDS(
     var version: Int,
     var name: String,
     var id: ID,
+    var comment: String?,
     var variables: List<Variable>,
     var functions: List<Function>,
     var elements: List<Element>
@@ -28,6 +29,7 @@ data class ScriptDS(
         var id: ID,
         var name: String,
         var type: String,
+        var comment: String?,
         var initialValue: Any?
     ) {
         override fun toString(): String = "public static $type $name${if (initialValue != null) " = $initialValue" else ""};"
@@ -36,13 +38,14 @@ data class ScriptDS(
     data class Function(
         var id: ID,
         var name: String,
+        var comment: String?,
         var parameters: List<Parameter>,
         var returns: List<Return>, // 暂时不接受多元组
         @JSONField(name = "next_elements") var nextElements: List<ID>
     ) {
         var script: ScriptDS? = null
 
-        override fun toString(): String = """public static ${returns[0].type} $name(${parameters.joinToString { "${it.type} ${it.name}" }}) {
+        override fun toString(): String = """${if (comment?.isNotEmpty() == true) "// $comment\n" else "" }public static ${returns[0].type} $name(${parameters.joinToString { "${if (it.comment?.isNotEmpty() == true) "/* ${it.comment} */ " else ""}${it.type} ${it.name}" }}) {
             |${nextElements.joinToString(separator = "\n") { "\t${script?.getElementById(it)?.iterToString()}" } }
             |}
         """.trimMargin()
@@ -52,6 +55,7 @@ data class ScriptDS(
         var id: ID,
         var name: String,
         var type: String,
+        var comment: String?,
         var op: Op,
         var inputs: List<Input>,
         @JSONField(name = "next_elements") var nextElements: List<ID>
@@ -70,22 +74,23 @@ data class ScriptDS(
 
         override fun toString(): String = """${if (type != "void") "$type $name = " else ""}${when (op)
         {
-            Op.ARRAY_INDEX -> "${inputs[0].value}[${inputs[1].value}]"
-            Op.ASSIGN -> inputs[0].value
-            Op.BRANCH_CALL -> "if (${inputs[0].value}) {\n\t${script?.getElementById(inputs[1].value)?.iterToString()} \n}" +
+            Op.ARRAY_INDEX -> "${inputs[0].value}[${inputs[1].value}];${if (comment?.isNotEmpty() == true) " // $comment\n" else "" }"
+            Op.ASSIGN -> "${inputs[0].value};${if (comment?.isNotEmpty() == true) " // $comment\n" else "" }"
+            Op.BRANCH_CALL -> "if (${inputs[0].value}) {${if (comment?.isNotEmpty() == true) " // $comment\n" else "" }\n\t${script?.getElementById(inputs[1].value)?.iterToString()} \n}" +
                 inputs.drop(2).windowed(size = 2, step = 2, partialWindows = false).joinToString(separator = "\n") { " else if (${it[0].value}) {\n\t${script?.getElementById(it[1].value)?.iterToString()}}" } +
                 if (inputs.size.mod(2) == 1) " else {\n\t${script?.getElementById(inputs.last().value)?.iterToString()}}" else ""
-            Op.FUNCTION_CALL -> "${inputs[0].value}(${inputs.drop(1).joinToString(separator = ", ", transform = Input::value)})"
-            Op.INFIX -> "${inputs[0].value} ${inputs[1].value} ${inputs[2].value}"
-            Op.UNARY -> "${inputs[0].value} ${inputs[1].value}"
-        }};"""
+            Op.FUNCTION_CALL -> "${inputs[0].value}(${inputs.drop(1).joinToString(separator = ", ", transform = Input::value)});${if (comment?.isNotEmpty() == true) " // $comment\n" else "" }"
+            Op.INFIX -> "${inputs[0].value} ${inputs[1].value} ${inputs[2].value};${if (comment?.isNotEmpty() == true) " // $comment\n" else "" }"
+            Op.UNARY -> "${inputs[0].value} ${inputs[1].value};${if (comment?.isNotEmpty() == true) " // $comment\n" else "" }"
+        }}"""
 
         fun iterToString(): String = toString() + "\n" + nextElements.joinToString(separator = "\n") { script?.getElementById(it)?.iterToString()?:"" }
     }
 
     data class Input(
         var type: String,
-        var value: String
+        var value: String,
+        var comment: String?
     )
 
 //    data class Output(
@@ -94,17 +99,19 @@ data class ScriptDS(
 
     data class Parameter(
         var type: String,
-        var name: String
+        var name: String,
+        var comment: String?
     )
 
     data class Return(
-        var type: String
+        var type: String,
+        var comment: String?
     )
 
     fun getElementById(id: ID) = elements.find { it.id == id }
 
     override fun toString(): String =
-        """public class $name {
+        """${if (comment?.isNotEmpty() == true) "// $comment\n" else "" }public class $name {
             |${variables.joinToString(separator = "\n") { "\t$it" } }
             |${functions.joinToString(separator = "\n") { "$it" } }
             |}

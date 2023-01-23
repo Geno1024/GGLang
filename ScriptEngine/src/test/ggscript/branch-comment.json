@@ -1,0 +1,109 @@
+{
+  "version": 1,
+  "name": "Branch",
+  "id": "dcb59e40-39de-42a7-baa8-dd8cd6f77b2b",
+  "comment": "a",
+  "variables": [
+
+  ],
+  "functions": [
+    {
+      "name": "main",
+      "id": "3cd82c95-756a-46b4-af8d-91058c40f9ee",
+      "comment": "main function",
+      "parameters": [
+        {
+          "type": "String[]",
+          "name": "args",
+          "comment": "command line arguments"
+        }
+      ],
+      "returns": [
+        {
+          "type": "void"
+        }
+      ],
+      "next_elements": [
+        "572e63d3-2b48-4137-9fa7-821866a7ca24"
+      ]
+    }
+  ],
+  "elements": [
+    {
+      "name": "arg",
+      "id": "572e63d3-2b48-4137-9fa7-821866a7ca24",
+      "op": "array_index",
+      "type": "String",
+      "inputs": [
+        {
+          "type": "String[]",
+          "value": "args"
+        },
+        {
+          "type": "int",
+          "value": "0"
+        }
+      ],
+      "next_elements": [
+        "99de5463-82a2-4207-9bcb-72efe6c795fb"
+      ]
+    },
+    {
+      "type": "void",
+      "name": "",
+      "op": "branch_call",
+      "id": "99de5463-82a2-4207-9bcb-72efe6c795fb",
+      "comment": "branching",
+      "inputs": [
+        {
+          "type": "",
+          "value": "arg.equals(\"0\")"
+        },
+        {
+          "type": "",
+          "value": "9e745663-0e55-4961-a756-dc99bc86a3ce"
+        },
+        {
+          "type": "",
+          "value": "93bcefea-669c-4910-b978-6812f3999528"
+        }
+      ],
+      "next_elements": []
+    },
+    {
+      "type": "void",
+      "name": "",
+      "id": "9e745663-0e55-4961-a756-dc99bc86a3ce",
+      "op": "function_call",
+      "comment": "print yes",
+      "inputs": [
+        {
+          "type": "",
+          "value": "System.out.println"
+        },
+        {
+          "type": "char",
+          "value": "'Y'"
+        }
+      ],
+      "next_elements": []
+    },
+    {
+      "type": "void",
+      "name": "",
+      "id": "93bcefea-669c-4910-b978-6812f3999528",
+      "op": "function_call",
+      "inputs": [
+        {
+          "type": "",
+          "value": "System.out.println"
+        },
+        {
+          "type": "char",
+          "value": "'N'"
+        }
+      ],
+      "next_elements": []
+    }
+  ]
+}

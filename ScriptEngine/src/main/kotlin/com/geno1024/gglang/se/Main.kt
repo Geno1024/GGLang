@@ -8,7 +8,7 @@ object Main
     @JvmStatic
     fun main(args: Array<String>)
     {
-        println(ScriptDS.from(File("ScriptEngine/src/test/ggscript/branch.json")))
+        println(ScriptDS.from(File("ScriptEngine/src/test/ggscript/branch-comment.json")))
 
     }
 }
